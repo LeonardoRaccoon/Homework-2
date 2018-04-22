@@ -19,8 +19,8 @@ public class Partita {
     private boolean finita;
 	
 	public Labirinto aule;
-	public Giocatore uno;
-	public Stanza StanzaCorrente;
+	private Giocatore uno;
+	private Stanza StanzaCorrente;
 	
 	
 	public Partita(){
@@ -42,6 +42,9 @@ public class Partita {
 		return this.StanzaCorrente;
 	}
 	
+	public Giocatore getGiocatore() {
+		return this.uno;
+	}
 	/**
 	 * Restituisce vero se e solo se la partita e' stata vinta
 	 * @return vero se partita vinta
@@ -72,5 +75,6 @@ public class Partita {
 
 	public void setCfu(int cfu) {
 		this.uno.cfu = cfu;		
-	}	
+	}
+	
 }

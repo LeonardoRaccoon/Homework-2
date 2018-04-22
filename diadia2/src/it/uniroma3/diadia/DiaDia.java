@@ -31,7 +31,7 @@ public class DiaDia {
 			"o regalarli se pensi che possano ingraziarti qualcuno.\n\n"+
 			"Per conoscere le istruzioni usa il comando 'aiuto'.";
 	
-	static final private String[] elencoComandi = {"vai", "aiuto", "fine", "prendi", "lascia"};
+	
 
 	private Partita partita;
 
@@ -57,24 +57,10 @@ public class DiaDia {
 	 * @return true se l'istruzione e' eseguita e il gioco continua, false altrimenti
 	 */
 	private boolean processaIstruzione(String istruzione) {
-		Comando comandoDaEseguire = new Comando(istruzione);
+		FabbricaDiComandiFisarmonica fabbrica = new FabbricaDiComandiFisarmonica();
+		Comando comando = fabbrica.costruisciComando(istruzione);
+		comando.esegui(partita);
 		
-		if (comandoDaEseguire.getNome() == null)
-			return false;
-
-		if (comandoDaEseguire.getNome().equals("fine")) {
-			this.fine(); 
-			return true;
-		} else if (comandoDaEseguire.getNome().equals("vai"))
-			this.vai(comandoDaEseguire.getParametro());
-		else if (comandoDaEseguire.getNome().equals("prendi"))
-			this.prendi(comandoDaEseguire.getParametro());
-		else if (comandoDaEseguire.getNome().equals("lascia"))
-			this.lascia();
-		else if (comandoDaEseguire.getNome().equals("aiuto"))
-			this.aiuto();
-		else
-			System.out.println("Comando sconosciuto");
 		if (this.partita.vinta()) {
 			System.out.println("Hai vinto!");
 			return true;
@@ -82,91 +68,7 @@ public class DiaDia {
 			return false;
 	}   
 
-	// implementazioni dei comandi dell'utente:
-
-	/**
-	 * Stampa informazioni di aiuto.
-	 */
-	private void aiuto() {
-		for(int i=0; i< elencoComandi.length; i++) 
-			System.out.print(elencoComandi[i]+" ");
-		System.out.println();
-	}
-
-	/**
-	 * Cerca di andare in una direzione. Se c'e' una stanza ci entra 
-	 * e ne stampa il nome, altrimenti stampa un messaggio di errore
-	 */
-	private void vai(String direzione) {
-		if(direzione==null)
-			System.out.println("Dove vuoi andare ?");
-		else {
-		Stanza prossimaStanza = null;
-		prossimaStanza = this.partita.getStanzaCorrente().getStanzaAdiacente(direzione);
-		if (prossimaStanza == null)
-			System.out.println("Direzione inesistente");
-		else {
-			this.partita.setStanzaCorrente(prossimaStanza);
-			int cfu = this.partita.getCfu();
-			this.partita.setCfu(cfu--);
-		}
-		}
-		System.out.println(partita.getStanzaCorrente().getDescrizione());
-	}
-	/**
-	 * Comando "prendi": una volta mandato il comando se la stanza è vuota lo comunica, se si è specificato il nome dell'oggetto
-	 * lo cerca nella stanza e se lo trova lo mette nella borsa eliminandolo dalla stanza, altrimenti se l'oggetto non
-	 * viene specificato stampa la lista di oggetti e richiama il metodo con il nuovo oggetto
-	 */
-	
-	private void prendi(String oggetto) {
-		if(this.partita.StanzaCorrente.hasAttrezzi()) {
-		if (oggetto == null) {
-			Scanner scan = new Scanner(System.in);
-			System.out.println(""+this.partita.getStanzaCorrente().getListaAttrezzi());
-			String stringa = scan.nextLine();
-			this.prendi(stringa);
-		}
-		else {
-		if(this.partita.getStanzaCorrente().hasAttrezzo(oggetto)) {
-			Attrezzo add = this.partita.getStanzaCorrente().getAttrezzo(oggetto);
-			this.partita.uno.zaino.addAttrezzo(add);
-			this.partita.getStanzaCorrente().removeAttrezzo(add);
-			System.out.println("Oggetto Raccolto!");
-		}
-		else System.out.println("Non c'è nessun atrezzo chiamato "+oggetto);
-		}
-		}
-		else System.out.println("Non ci sono oggetti nella stanza!");
-	}
-	
-	/**
-	 * Comando "lascia": dopo aver stampato la lista di oggetti nell'inventario, se presenti, tramite il nome
-	 * dell'oggetto lo si può spostare dalla borsa alla stanza corrente.
-	 */
-	private void lascia() {
-		Scanner scan = new Scanner(System.in);
-		String messaggio = this.partita.uno.zaino.toString();
-		System.out.println(messaggio);
-		if (!(messaggio.equals("La borsa è vuota!"))){
-			String oggetto = new String();
-				oggetto = scan.nextLine();
-		if(this.partita.uno.zaino.hasAttrezzo(oggetto)) {
-			
-			Attrezzo add = this.partita.uno.zaino.getAttrezzo(oggetto);
-			this.partita.uno.zaino.removeAttrezzo(oggetto);
-			this.partita.getStanzaCorrente().addAttrezzo(add);
-			System.out.println("Oggetto Lasciato!");
-		}
-	}
-	}
-
-	/**
-	 * Comando "Fine".
-	 */
-	private void fine() {
-		System.out.println("Grazie di aver giocato!");  // si desidera smettere
-	}
+	// implementazioni dei comandi dell'utente
 
 	public static void main(String[] argc) {
 		DiaDia gioco = new DiaDia();
